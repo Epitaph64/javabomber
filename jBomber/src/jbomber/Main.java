@@ -1045,7 +1045,7 @@ public class Main extends BasicGame {
         }
         if (whiteBomber != null)
         {
-            if (whiteBomber.getHuman())
+            if (whiteBomber.getHuman() && whiteBomber.getAlive())
             {
                 if (input.isKeyDown(Input.KEY_W))
                 {
@@ -1071,7 +1071,7 @@ public class Main extends BasicGame {
         }
         if (blackBomber != null)
         {
-            if (blackBomber.getHuman())
+            if (blackBomber.getHuman() && blackBomber.getAlive())
             {
                 if (input.isKeyDown(Input.KEY_I))
                 {
