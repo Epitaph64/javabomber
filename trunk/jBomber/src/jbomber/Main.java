@@ -138,7 +138,10 @@ public class Main extends BasicGame {
         if (gameState == 1)
         {
             checkInputGame(container);
+            //Check on all the bombs
             checkBombs();
+            //Check to see if anyone has been killed
+            checkFire();
             //Check input or AI for each player
             checkPlayer(whiteBomber);
             checkPlayer(blackBomber);
@@ -149,7 +152,9 @@ public class Main extends BasicGame {
             shiftPlayer(blackBomber);
             shiftPlayer(redBomber);
             shiftPlayer(blueBomber);
+            //Update the screen shake effect if necessary
             checkShake();
+            //Update the fog effect
             fogX += -0.3f;
             if (fogX < -640)
             {
@@ -169,17 +174,18 @@ public class Main extends BasicGame {
         if (gameState == 1)
         {
             drawTiles(g);
-            drawFire(g);
-            g.drawImage(fog, fogX + jitterX, 0);
-            g.drawImage(fog, fogX + 640 + jitterX, 0);
             drawPlayer(g, whiteBomber);
             drawPlayer(g, blackBomber);
             drawPlayer(g, redBomber);
             drawPlayer(g, blueBomber);
+            drawFire(g);
+            g.drawImage(fog, fogX + jitterX, 0);
+            g.drawImage(fog, fogX + 640 + jitterX, 0);
         }
     }
 
-    private void changeMusic(int songNumber) throws SlickException {
+    private void changeMusic(int songNumber) throws SlickException
+    {
         bombsong.stop();
         if (songNumber == 1)
         {
@@ -340,7 +346,7 @@ public class Main extends BasicGame {
         }
     }
 
-    private void newRound(boolean[] humanPlayers)
+    private void newRound(boolean[] whichPlayersAreHuman)
     {
         board = new int[19][15];
         players = new int[19][15];
@@ -394,10 +400,10 @@ public class Main extends BasicGame {
         board[1][12] = 0;
         board[2][13] = 0;
         //Place Players
-        whiteBomber = new Player(1, 1, 1, Color.white, humanPlayers[0]);
-        blackBomber = new Player(17, 1, 2, Color.black, humanPlayers[1]);
-        redBomber = new Player(17, 13, 3, Color.red, humanPlayers[2]);
-        blueBomber = new Player(1, 13, 4, Color.blue, humanPlayers[3]);
+        whiteBomber = new Player(1, 1, 1, Color.white, whichPlayersAreHuman[0]);
+        blackBomber = new Player(17, 1, 2, Color.black, whichPlayersAreHuman[1]);
+        redBomber = new Player(17, 13, 3, Color.red, whichPlayersAreHuman[2]);
+        blueBomber = new Player(1, 13, 4, Color.blue, whichPlayersAreHuman[3]);
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
@@ -729,7 +735,6 @@ public class Main extends BasicGame {
         }
     }
 
-
     // Pretty much just placeholder script, because the AI is useless at the moment
     private void updateAI(Player player)
     {
@@ -897,7 +902,7 @@ public class Main extends BasicGame {
     {
         boolean moveTile = false;
         boolean allowMove = false;
-        if (player != null)
+        if (player.getAlive())
         {
             // 2
             //1 3
@@ -984,7 +989,7 @@ public class Main extends BasicGame {
 
     private boolean placeBomb(Player player)
     {
-        if (player != null)
+        if (player.getAlive())
         {
             if (player.getOffSetTileX() == 0 && player.getOffSetTileY() == 0)
             {
@@ -1084,10 +1089,10 @@ public class Main extends BasicGame {
                             explosion.play();
                         }
                         makeExplosion(x, y, bombs[x][y].getSize(),
-                                bombs[x][y].getDirections()[0],
-                                bombs[x][y].getDirections()[1],
-                                bombs[x][y].getDirections()[2],
-                                bombs[x][y].getDirections()[3]);
+                            bombs[x][y].getDirections()[0],
+                            bombs[x][y].getDirections()[1],
+                            bombs[x][y].getDirections()[2],
+                            bombs[x][y].getDirections()[3]);
                         board[x][y] = 0;
                         bombs[x][y] = null;
                     }
@@ -1098,6 +1103,10 @@ public class Main extends BasicGame {
                 }
             }
         }
+    }
+
+    private void checkFire()
+    {
         for (int x = 0; x < 19; x ++)
         {
             for (int y = 0; y < 15; y++)
@@ -1117,38 +1126,30 @@ public class Main extends BasicGame {
                             {
                                 case 1:
                                 {
-                                    if (whiteBomber != null)
-                                    {
-                                        whiteBomber.setAlive(false);
-                                        players[x][y] = 0;
-                                    }
+                                    flushPlayerReferences(1);
+                                    whiteBomber.setAlive(false);
+                                    players[x][y] = 0;
                                     break;
                                 }
                                 case 2:
                                 {
-                                    if (blackBomber != null)
-                                    {
-                                        blackBomber.setAlive(false);
-                                        players[x][y] = 0;
-                                    }
+                                    flushPlayerReferences(2);
+                                    blackBomber.setAlive(false);
+                                    players[x][y] = 0;
                                     break;
                                 }
                                 case 3:
                                 {
-                                    if (redBomber != null)
-                                    {
-                                        redBomber.setAlive(false);
-                                        players[x][y] = 0;
-                                    }
+                                    flushPlayerReferences(3);
+                                    redBomber.setAlive(false);
+                                    players[x][y] = 0;
                                     break;
                                 }
                                 case 4:
                                 {
-                                    if (blueBomber != null)
-                                    {
-                                        blueBomber.setAlive(false);
-                                        players[x][y] = 0;
-                                    }
+                                    flushPlayerReferences(4);
+                                    blueBomber.setAlive(false);
+                                    players[x][y] = 0;
                                     break;
                                 }
                             }
@@ -1175,10 +1176,6 @@ public class Main extends BasicGame {
             {
                 updateAI(player);
             }
-        }
-        else
-        {
-            flushPlayerReferences(player.getPID());
         }
     }
 
@@ -1380,20 +1377,17 @@ public class Main extends BasicGame {
 
     private void drawPlayer(Graphics g, Player player)
     {
-        if (player != null)
+        if (player.getAlive())
         {
             int tileOpaque = 2 * player.getDirection() + 1;
             int tileColored = 2 * player.getDirection();
-            if (player.getAlive())
-            {
-                tileset.getSprite((tileOpaque), 1).draw(
-                        player.getX() * 32 + jitterX + player.getOffSetX(),
-                        player.getY() * 32 + jitterY + player.getOffSetY());
-                tileset.getSprite((tileColored),1).draw(
-                        player.getX() * 32 + jitterX + player.getOffSetX(),
-                        player.getY() * 32 + jitterY + player.getOffSetY(),
-                        player.getColor());
-            }
+            tileset.getSprite((tileOpaque), 1).draw(
+                    player.getX() * 32 + jitterX + player.getOffSetX(),
+                    player.getY() * 32 + jitterY + player.getOffSetY());
+            tileset.getSprite((tileColored),1).draw(
+                    player.getX() * 32 + jitterX + player.getOffSetX(),
+                    player.getY() * 32 + jitterY + player.getOffSetY(),
+                    player.getColor());
         }
     }
 
