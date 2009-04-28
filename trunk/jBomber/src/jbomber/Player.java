@@ -6,6 +6,8 @@ public class Player {
 
     private boolean human;
 
+    private int[] target = new int[2];
+
     private boolean[] directions;
 
     private int offsetX, offsetY;
@@ -199,5 +201,16 @@ public class Player {
     public int getDeathClock()
     {
         return deathClock;
+    }
+
+    public void setTarget(int x, int y)
+    {
+        target[0] = x;
+        target[1] = y;
+    }
+
+    public int[] getTarget()
+    {
+        return target;
     }
 }
