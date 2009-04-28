@@ -434,58 +434,10 @@ public class Main extends BasicGame {
         board[1][12] = 0;
         board[2][13] = 0;
         //Place Players
-        if (playerType[0] == 0)
-        {
-            whiteBomber = new Player(1, 1, 1, Color.white, false);
-            whiteBomber.setAlive(false);
-        }
-        if (playerType[0] == 1)
-        {
-            whiteBomber = new Player(1, 1, 1, Color.white, true);
-        }
-        if (playerType[0] == 2)
-        {
-            whiteBomber = new Player(1, 1, 1, Color.white, false);
-        }
-        if (playerType[1] == 0)
-        {
-            blackBomber = new Player(17, 1, 2, Color.black, false);
-            blackBomber.setAlive(false);
-        }
-        if (playerType[1] == 1)
-        {
-            blackBomber = new Player(17, 1, 2, Color.black, true);
-        }
-        if (playerType[1] == 2)
-        {
-            blackBomber = new Player(17, 1, 2, Color.black, false);
-        }
-        if (playerType[2] == 0)
-        {
-            redBomber = new Player(17, 13, 3, Color.red, false);
-            redBomber.setAlive(false);
-        }
-        if (playerType[2] == 1)
-        {
-            redBomber = new Player(17, 13, 3, Color.red, true);
-        }
-        if (playerType[2] == 2)
-        {
-            redBomber = new Player(17, 13, 3, Color.red, false);
-        }
-        if (playerType[3] == 0)
-        {
-            blueBomber = new Player(1, 13, 4, Color.blue, false);
-            blueBomber.setAlive(false);
-        }
-        if (playerType[3] == 1)
-        {
-            blueBomber = new Player(1, 13, 4, Color.blue, true);
-        }
-        if (playerType[3] == 2)
-        {
-            blueBomber = new Player(1, 13, 4, Color.blue, false);
-        }
+        whiteBomber = new Player(1, 1, 1, Color.white, playerType[0]);
+        blackBomber = new Player(17, 1, 2, Color.black, playerType[1]);
+        redBomber = new Player(17, 13, 3, Color.red, playerType[2]);
+        blueBomber = new Player(1, 13, 4, Color.blue, playerType[3]);
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
