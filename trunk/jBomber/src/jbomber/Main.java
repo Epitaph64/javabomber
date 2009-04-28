@@ -22,7 +22,7 @@ public class Main extends BasicGame {
      *  1 - In Game
     */
 
-    private int playerType[] = {1,1,2,2};
+    private int playerType[] = {1,2,2,2};
 
     //Menu Resources
     private Image bgSmall;
@@ -118,6 +118,7 @@ public class Main extends BasicGame {
         bombsong = new Music("data/bombsong.ogg");
         bombup = new Sound("data/bombup.wav");
         fireup = new Sound("data/fireup.wav");
+        //Rectangles to click for menu interaction
         play = new Rectangle(200, 140, playButton.getWidth(), playButton.getHeight());
         options = new Rectangle(200, 240, optionsButton.getWidth(), optionsButton.getHeight());
         quit = new Rectangle(200, 340, quitButton.getWidth(), quitButton.getHeight());
@@ -184,6 +185,9 @@ public class Main extends BasicGame {
             drawPlayer(g, blueBomber);
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
+            drawTarget(g, blueBomber);
+            drawTarget(g, blackBomber);
+            drawTarget(g, redBomber);
         }
     }
 
@@ -772,163 +776,34 @@ public class Main extends BasicGame {
     // Pretty much just placeholder script, because the AI is useless at the moment
     private void updateAI(Player player)
     {
-        boolean aim[] = {false, false, false, false};
-        player.setClock(player.getClock()+1);
-        if (player.getClock() > 50)
+        for (int x = player.getX() - 2; x < player.getX() + 2; x++)
         {
-            int randomDirection = mt.nextInt(4);
-            for (int x = 0; x < 19; x++)
+            if (x >= 0 && x < 19)
             {
-                for (int y = 0; y < 15; y++)
+                if (board[x][player.getY()] == 2)
                 {
-                    if (players[x][y] != 0 && players[x][y] != player.getPID())
-                    {
-                        if (x > player.getX())
-                        {
-                            aim[1] = true;
-                        }
-                        if (x < player.getX())
-                        {
-                            aim[0] = true;
-                        }
-                        if (y > player.getY())
-                        {
-                            aim[2] = true;
-                        }
-                        if (y < player.getY())
-                        {
-                            aim[3] = true;
-                        }
-                    }
+                    player.setTarget(x, player.getY());
                 }
             }
-            int dirScore[] = {1000, 1000, 1000, 1000};
-            //Reduce score for walls and fire
-            if (player.getX() - 1 >= 0)
+        }
+        for (int y = player.getY() - 2; y < player.getY() + 2; y++)
+        {
+            if (y >= 0 && y < 15)
             {
-                if (fire[player.getX()-1][player.getY()] == null)
+                if (board[player.getX()][y] == 2)
                 {
-                    dirScore[0] -= 400;
-                }
-                if (board[player.getX()-1][player.getY()] == 1)
-                {
-                    dirScore[0] = 0;
-                }
-                if (aim[0])
-                {
-                    dirScore[0] += 250;
+                    player.setTarget(player.getX(), y);
                 }
             }
-            else
-            {
-                dirScore[0] = 0;
-            }
-            if (player.getX() + 1 < 19)
-            {
-                if (fire[player.getX()+1][player.getY()] == null)
-                {
-                    dirScore[1] -= 400;
-                }
-                if (board[player.getX()+1][player.getY()] == 1)
-                {
-                    dirScore[1] = 0;
-                }
-                if (aim[1])
-                {
-                    dirScore[1] += 250;
-                }
-            }
-            else
-            {
-                dirScore[0] = 0;
-            }
-            if (player.getY() - 1 >= 0)
-            {
-                if (fire[player.getX()][player.getY()-1] == null)
-                {
-                    dirScore[2] -= 400;
-                }
-                if (board[player.getX()][player.getY()-1] == 1)
-                {
-                    dirScore[2] = 0;
-                }
-                if (aim[2])
-                {
-                    dirScore[2] += 250;
-                }
-            }
-            else
-            {
-                dirScore[0] = 0;
-            }
-            if (player.getY() + 1 < 15)
-            {
-                if (fire[player.getX()][player.getY()+1] == null)
-                {
-                    dirScore[3] -= 400;
-                }
-                if (board[player.getX()][player.getY()+1] == 1)
-                {
-                    dirScore[3] = 0;
-                }
-                if (aim[3])
-                {
-                    dirScore[3] += 250;
-                }
-            }
-            else
-            {
-                dirScore[0] = 0;
-            }
-            int directionChosen = 0;
-            int priorChoice = 0;
-            for (int i = 0; i < 4; i++)
-            {
-                if (dirScore[i] > priorChoice)
-                {
-                    directionChosen = i;
-                    priorChoice = dirScore[i];
-                }
-            }
-            switch(directionChosen)
-            {
-                case 0:
-                {
-                    if (player.getX() - 1 >= 0)
-                    {
-                        boolean b = movePlayer(player, -1, 0);
-                        if (b) player.setClock(0);
-                    }
-                    break;
-                }
-                case 1:
-                {
-                    if (player.getX() + 1 < 19)
-                    {
-                        boolean b = movePlayer(player, 1, 0);
-                        if (b) player.setClock(0);
-                    }
-                    break;
-                }
-                case 2:
-                {
-                    if (player.getY() - 1 >= 0)
-                    {
-                        boolean b = movePlayer(player, 0, -1);
-                        if (b) player.setClock(0);
-                    }
-                    break;
-                }
-                case 3:
-                {
-                    if (player.getY() + 1 < 15)
-                    {
-                        boolean b = movePlayer(player, 0, 1);
-                        if (b) player.setClock(0);
-                    }
-                    break;
-                }
-            }
+        }
+    }
+
+    private void drawTarget(Graphics g, Player player)
+    {
+        if (player != null)
+        {
+            g.setColor(player.getColor());
+            g.drawRect(player.getTarget()[0] * 32 + jitterX, player.getTarget()[1] * 32 + jitterY, 32, 32);
         }
     }
 
@@ -1217,32 +1092,32 @@ public class Main extends BasicGame {
     {
         if (player.getDeathClock() > 0)
         {
-            if (player.getDeathClock() >= 80)
+            if (player.getDeathClock() >= 85)
             {
                 deathAnim.getSprite(1, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
                 deathAnim.getSprite(0, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
             }
-            if (player.getDeathClock() < 80 && player.getDeathClock() >= 60)
+            if (player.getDeathClock() < 85 && player.getDeathClock() >= 65)
             {
                 deathAnim.getSprite(3, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
                 deathAnim.getSprite(2, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
             }
-            if (player.getDeathClock() < 60 && player.getDeathClock() >= 40)
+            if (player.getDeathClock() < 65 && player.getDeathClock() >= 45)
             {
                 deathAnim.getSprite(5, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
                 deathAnim.getSprite(4, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
             }
-            if (player.getDeathClock() < 40 && player.getDeathClock() >= 20)
+            if (player.getDeathClock() < 45 && player.getDeathClock() >= 30)
             {
                 deathAnim.getSprite(7, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
                 deathAnim.getSprite(6, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
             }
-            if (player.getDeathClock() < 20 && player.getDeathClock() >= 10)
+            if (player.getDeathClock() < 30 && player.getDeathClock() >= 15)
             {
                 deathAnim.getSprite(9, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
                 deathAnim.getSprite(8, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
             }
-            if (player.getDeathClock() < 10 && player.getDeathClock() >= 0)
+            if (player.getDeathClock() < 15 && player.getDeathClock() >= 0)
             {
                 deathAnim.getSprite(11, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
                 deathAnim.getSprite(10, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
