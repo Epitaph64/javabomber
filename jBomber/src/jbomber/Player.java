@@ -6,7 +6,10 @@ public class Player {
 
     private boolean human;
 
-    private int[] target = new int[2];
+    private int[] safeSpot = new int[2];
+    private int directionToSafety;
+    private int directionToAttack;
+    private int phase;
 
     private boolean[] directions;
 
@@ -203,14 +206,44 @@ public class Player {
         return deathClock;
     }
 
-    public void setTarget(int x, int y)
+    public void setSafeSpot(int x, int y)
     {
-        target[0] = x;
-        target[1] = y;
+        safeSpot[0] = x;
+        safeSpot[1] = y;
     }
 
-    public int[] getTarget()
+    public int[] getSafeSpot()
     {
-        return target;
+        return safeSpot;
+    }
+
+    public void setDirectionToSafety(int dir)
+    {
+        directionToSafety = dir;
+    }
+
+    public int getDirectionToSafety()
+    {
+        return directionToSafety;
+    }
+
+    public void setDirectionToAttack(int dir)
+    {
+        directionToAttack = dir;
+    }
+
+    public int getDirectionToAttack()
+    {
+        return directionToAttack;
+    }
+
+    public void setPhase(int p)
+    {
+        phase = p;
+    }
+
+    public int getPhase()
+    {
+        return phase;
     }
 }
