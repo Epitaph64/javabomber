@@ -25,7 +25,7 @@ public class Main extends BasicGame {
      *  1 - In Game
     */
 
-    private int playerType[] = {2,2,2,2};
+    private int playerType[] = {1,2,2,2};
 
     //Menu Resources
     private Image bgSmall;
@@ -192,10 +192,20 @@ public class Main extends BasicGame {
             drawPlayer(g, blueBomber);
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
-            drawTarget(g, blueBomber);
-            drawTarget(g, blackBomber);
-            drawTarget(g, redBomber);
+//            drawTarget(g, whiteBomber);
+//            drawTarget(g, blueBomber);
+//            drawTarget(g, blackBomber);
+//            drawTarget(g, redBomber);
+//            drawPlayerPhase(g, whiteBomber);
+//            drawPlayerPhase(g, blackBomber);
+//            drawPlayerPhase(g, redBomber);
+//            drawPlayerPhase(g, blueBomber);
         }
+    }
+
+    private void drawPlayerPhase(Graphics g, Player player)
+    {
+        g.drawString("" + player.getPhase(), player.getX() * 32, player.getY() * 32);
     }
 
     private void changeMusic(int songNumber) throws SlickException
@@ -787,7 +797,7 @@ public class Main extends BasicGame {
     private void updateAI(Player player)
     {
         player.setClock(player.getClock()+1);
-        if (player.getClock() > 15 && player.getAlive())
+        if (player.getClock() > 15 && player.getAlive() && player.getOffSetTileX() == 0 && player.getOffSetTileY() == 0)
         {
             if (player.getPhase() == 0)
             {
@@ -897,11 +907,12 @@ public class Main extends BasicGame {
                     {
                         if ( ! directionBlocked[i] && i != direction)
                         {
-                            randomGrab[i] += mt.nextInt(100) + 1;
+                            randomGrab[i] += mt.nextInt(100) + 50;
                             amountOfChoices ++;
                         }
 
                     }
+                    best = 0;
                     for (int i = 0; i < 4; i++)
                     {
                         if (randomGrab[i] > best)
@@ -961,6 +972,7 @@ public class Main extends BasicGame {
                         }
 
                     }
+                    best = 0;
                     for (int i = 0; i < 4; i++)
                     {
                         if (randomGrab[i] > best)
@@ -1000,47 +1012,123 @@ public class Main extends BasicGame {
             }
             if (player.getPhase() == 1)
             {
-                boolean bombPlaced = false;
-                switch(player.getDirectionToAttack())
+                int currentView[][] = new int[19][15];
+                for (int x = 0; x < 19; x++)
                 {
-                    case 0:
+                    for (int y = 0; y < 15; y++)
                     {
-                        boolean b = movePlayer(player, 0, -1);
-                        if (!b) bombPlaced = true;
-                        player.setClock(0);
-                        break;
+                        if (board[x][y] == 1)
+                        {
+                            currentView[x][y] = 1;
+                        }
+                        if (board[x][y] == 2)
+                        {
+                            currentView[x][y] = 2;
+                        }
+                        if (players[x][y] != 0)
+                        {
+                            currentView[x][y] = 2;
+                        }
+                        if (fire[x][y] != null)
+                        {
+                            currentView[x][y] = 1;
+                        }
+                        if (bombs[x][y] != null)
+                        {
+                            currentView[x][y] = 3;
+                        }
                     }
-                    case 1:
+                }
+                boolean bombPlaced = false;
+                if (mt.nextInt(5) < 3)
+                {
+                    switch(player.getDirectionToAttack())
                     {
-                        boolean b = movePlayer(player, 1, 0);
-                        if (!b) bombPlaced = true;
-                        player.setClock(0);
-                        break;
+                        case 0:
+                        {
+                            boolean b = movePlayer(player, 0, -1);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
+                        case 1:
+                        {
+                            boolean b = movePlayer(player, 1, 0);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
+                        case 2:
+                        {
+                            boolean b = movePlayer(player, 0, 1);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
+                        case 3:
+                        {
+                            boolean b = movePlayer(player, -1, 0);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
                     }
-                    case 2:
+                }
+                else
+                {
+                    int newDirection = mt.nextInt(4);
+                    switch(newDirection)
                     {
-                        boolean b = movePlayer(player, 0, 1);
-                        if (!b) bombPlaced = true;
-                        player.setClock(0);
-                        break;
-                    }
-                    case 3:
-                    {
-                        boolean b = movePlayer(player, -1, 0);
-                        if (!b) bombPlaced = true;
-                        player.setClock(0);
-                        break;
+                        case 0:
+                        {
+                            boolean b = movePlayer(player, 0, -1);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
+                        case 1:
+                        {
+                            boolean b = movePlayer(player, 1, 0);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
+                        case 2:
+                        {
+                            boolean b = movePlayer(player, 0, 1);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
+                        case 3:
+                        {
+                            boolean b = movePlayer(player, -1, 0);
+                            if (!b) bombPlaced = true;
+                            player.setClock(0);
+                            break;
+                        }
                     }
                 }
                 if (bombPlaced)
                 {
-                    placeBomb(player);
-                    player.setPhase(2);
+                    if (player.getX() != player.getSafeSpot()[0] && player.getY() != player.getSafeSpot()[1])
+                    {
+                        placeBomb(player);
+                        player.setPhase(2);
+                    }
+                    else
+                    {
+                        player.setPhase(0);
+                    }
                 }
             }
             if (player.getPhase() == 2)
             {
-                if (player.getX() != player.getSafeSpot()[0] || player.getY() != player.getSafeSpot()[1])
+                if (player.getClock() > 200)
+                {
+                    player.setPhase(0);
+                }
+                if (!(player.getX() == player.getSafeSpot()[0] && player.getY() == player.getSafeSpot()[1]))
                 {
                     switch(player.getDirectionToSafety())
                     {
@@ -1100,13 +1188,6 @@ public class Main extends BasicGame {
                             player.setClock(0);
                             break;
                         }
-                    }
-                }
-                else
-                {
-                    if (player.getClock() > 200)
-                    {
-                        player.setPhase(0);
                     }
                 }
             }
