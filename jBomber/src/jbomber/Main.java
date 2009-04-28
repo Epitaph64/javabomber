@@ -703,15 +703,20 @@ public class Main extends BasicGame {
                 }
             }
         }
+        updateFireSprites();
+    }
+
+    private void updateFireSprites()
+    {
         //Update the fire graphics as necessary
         for (int x = 0; x < 19; x++)
         {
             for (int y = 0; y < 15; y++)
             {
-                up = false;
-                down = false;
-                right = false;
-                left = false;
+                boolean up = false;
+                boolean down = false;
+                boolean right = false;
+                boolean left = false;
                 if (fire[x][y] != null)
                 {
                     if (x - 1 >= 0)
@@ -1424,6 +1429,7 @@ public class Main extends BasicGame {
                     if (fire[x][y].getDead())
                     {
                         fire[x][y] = null;
+                        updateFireSprites();
                     }
                     else
                     {
