@@ -13,22 +13,16 @@ import org.newdawn.slick.Sound;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 
-/*
- * All rights to the scripts in this program belong to Epitaph64. The bomb
- * fire art and bomberman sprites belong to Hudson Soft, and the random
- * generation algorithm was made be Sean Luke. You may not distribute or
- * reuse this script without my permission, although you probably wouldn't
- * want to anyways :D
-*/
-
 public class Main extends BasicGame {
 
     private int gameState = 0;
 
-    private boolean[] humans = {true, true, false, false};
+    /* Game State List for Reference
+     *  0 - Menu
+     *  1 - In Game
+    */
 
-    // 0: Menu
-    // 1: Game
+    private boolean[] humans = {true, true, false, false};
 
     //Menu Resources
     private Image bgSmall;
@@ -77,7 +71,7 @@ public class Main extends BasicGame {
 
     public Main()
     {
-        super("jBomber b5");
+        super("jBomber");
     }
     
     public static void main(String[] arguments)
@@ -145,11 +139,16 @@ public class Main extends BasicGame {
         {
             checkInputGame(container);
             checkBombs();
+            //Check input or AI for each player
             checkPlayer(whiteBomber);
             checkPlayer(blackBomber);
             checkPlayer(redBomber);
             checkPlayer(blueBomber);
-            shiftAllPlayers();
+            //Shift any players currently in transition between tiles
+            shiftPlayer(whiteBomber);
+            shiftPlayer(blackBomber);
+            shiftPlayer(redBomber);
+            shiftPlayer(blueBomber);
             checkShake();
             fogX += -0.3f;
             if (fogX < -640)
@@ -177,16 +176,6 @@ public class Main extends BasicGame {
             drawPlayer(g, blackBomber);
             drawPlayer(g, redBomber);
             drawPlayer(g, blueBomber);
-    //        if (debug)
-    //        {
-    //            for (int x = 0; x < 19; x++)
-    //            {
-    //                for (int y = 0; y < 15; y++)
-    //                {
-    //                    g.drawString("" + players[x][y], x * 32 + jitterX, y * 32 + jitterY);
-    //                }
-    //            }
-    //        }
         }
     }
 
@@ -416,7 +405,8 @@ public class Main extends BasicGame {
         shake = true;
         shakeMagnitude += 1;
         int[][] explodefield = new int[19][15];
-        /*     5
+        /* Diagram to show which numbers equal which directions (confusing, I know)
+         *     5
          *     1
          * 8 4 0 2 6
          *     3
@@ -649,27 +639,15 @@ public class Main extends BasicGame {
                 }
             }
         }
-        updateFlames();
-    }
-
-    private void shiftAllPlayers()
-    {
-        shiftPlayer(whiteBomber);
-        shiftPlayer(blackBomber);
-        shiftPlayer(redBomber);
-        shiftPlayer(blueBomber);
-    }
-
-    private void updateFlames()
-    {
+        //Update the fire graphics as necessary
         for (int x = 0; x < 19; x++)
         {
             for (int y = 0; y < 15; y++)
             {
-                boolean up = false;
-                boolean down = false;
-                boolean right = false;
-                boolean left = false;
+                up = false;
+                down = false;
+                right = false;
+                left = false;
                 if (fire[x][y] != null)
                 {
                     if (x - 1 >= 0)
@@ -751,6 +729,8 @@ public class Main extends BasicGame {
         }
     }
 
+
+    // Pretty much just placeholder script, because the AI is useless at the moment
     private void updateAI(Player player)
     {
         boolean aim[] = {false, false, false, false};
@@ -1031,14 +1011,6 @@ public class Main extends BasicGame {
             bombsong.loop();
             gameState = 0;
         }
-//        if (input.isKeyPressed(Input.KEY_F2))
-//        {
-//            newRound(humans);
-//        }
-//        if (input.isKeyPressed(Input.KEY_F3))
-//        {
-//            debug = !debug;
-//        }
         if (input.isKeyPressed(Input.KEY_F4))
         {
             container.setFullscreen( ! container.isFullscreen());
@@ -1189,34 +1161,30 @@ public class Main extends BasicGame {
 
     private void checkPlayer(Player player)
     {
-        if (player != null)
+        if (player.getAlive())
         {
-            if (player.getAlive())
+            players[player.getX()][player.getY()] = player.getPID();
+            if (player.getHuman())
             {
-                players[player.getX()][player.getY()] = player.getPID();
-                if (player.getHuman())
+                if (player.getClock() > 0)
                 {
-                    if (player.getClock() > 0)
-                    {
-                        player.setClock(player.getClock()-1);
-                    }
-                }
-                else
-                {
-                    updateAI(player);
+                    player.setClock(player.getClock()-1);
                 }
             }
             else
             {
-                flushPlayerReferences(player.getPID());
-                player = null;
+                updateAI(player);
             }
+        }
+        else
+        {
+            flushPlayerReferences(player.getPID());
         }
     }
 
     private void shiftPlayer(Player player)
     {
-        if (player != null)
+        if (player.getAlive())
         {
             if (players[player.getX()+player.getOffSetTileX()][player.getY()+player.getOffSetTileY()] == 0)
             {
