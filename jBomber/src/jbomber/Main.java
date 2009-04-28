@@ -65,6 +65,7 @@ public class Main extends BasicGame {
 
     private SpriteSheet tileset;
     private SpriteSheet bombImage;
+    private SpriteSheet deathAnim;
     
     private Input input;
     private boolean changingOptions = false;
@@ -106,8 +107,9 @@ public class Main extends BasicGame {
         cpuCap = new Image("data/menu/cpu_caption.png");
         humCap = new Image("data/menu/human_caption.png");
         offCap = new Image("data/menu/off_caption.png");
-        //Animated Bomb Loading
+        //Animations Loading
         bombImage = new SpriteSheet("data/bomb.png", 32, 32);
+        deathAnim = new SpriteSheet("data/death_animation.png", 32, 32);
         //TileSet Loading
         tileset = new SpriteSheet("data/tileset.png", 32, 32);
         fog = new Image("data/fog.png");
@@ -170,16 +172,16 @@ public class Main extends BasicGame {
         {
             drawMenuBackground(g);
             drawMenuButtons(g);
-            g.drawImage(title, 0, 0);
+            g.drawImage(title, 50, 0);
         }
         if (gameState == 1)
         {
             drawTiles(g);
+            drawFire(g);
             drawPlayer(g, whiteBomber);
             drawPlayer(g, blackBomber);
             drawPlayer(g, redBomber);
             drawPlayer(g, blueBomber);
-            drawFire(g);
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
         }
@@ -372,7 +374,7 @@ public class Main extends BasicGame {
         }
         else
         {
-            g.drawImage(playButton, 200, 140);
+            g.drawImage(playButton, 200, 150);
             g.drawImage(optionsButton, 200, 240);
             g.drawImage(quitButton, 200, 340);
         }
@@ -1259,6 +1261,44 @@ public class Main extends BasicGame {
         }
     }
 
+    private void drawDead(Graphics g, Player player)
+    {
+        if (player.getDeathClock() > 0)
+        {
+            if (player.getDeathClock() >= 80)
+            {
+                deathAnim.getSprite(1, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
+                deathAnim.getSprite(0, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
+            }
+            if (player.getDeathClock() < 80 && player.getDeathClock() >= 60)
+            {
+                deathAnim.getSprite(3, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
+                deathAnim.getSprite(2, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
+            }
+            if (player.getDeathClock() < 60 && player.getDeathClock() >= 40)
+            {
+                deathAnim.getSprite(5, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
+                deathAnim.getSprite(4, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
+            }
+            if (player.getDeathClock() < 40 && player.getDeathClock() >= 20)
+            {
+                deathAnim.getSprite(7, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
+                deathAnim.getSprite(6, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
+            }
+            if (player.getDeathClock() < 20 && player.getDeathClock() >= 10)
+            {
+                deathAnim.getSprite(9, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
+                deathAnim.getSprite(8, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
+            }
+            if (player.getDeathClock() < 10 && player.getDeathClock() >= 0)
+            {
+                deathAnim.getSprite(11, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
+                deathAnim.getSprite(10, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
+            }
+            player.setDeathClock(player.getDeathClock() - 1);
+        }
+    }
+
     private void shiftPlayer(Player player)
     {
         if (player.getAlive())
@@ -1468,6 +1508,10 @@ public class Main extends BasicGame {
                     player.getX() * 32 + jitterX + player.getOffSetX(),
                     player.getY() * 32 + jitterY + player.getOffSetY(),
                     player.getColor());
+        }
+        else if (player.getDeathClock() > 0)
+        {
+            drawDead(g, player);
         }
     }
 
