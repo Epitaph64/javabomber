@@ -22,7 +22,7 @@ public class Main extends BasicGame {
      *  1 - In Game
     */
 
-    private boolean[] humans = {true, true, false, false};
+    private int playerType[] = {1,1,2,2};
 
     //Menu Resources
     private Image bgSmall;
@@ -34,7 +34,7 @@ public class Main extends BasicGame {
     private Image quitButton;
     private Image backButton;
     private Image title;
-    private Image cpuCap, humCap;
+    private Image cpuCap, humCap, offCap;
     private int menuMouseX, menuMouseY;
     private Rectangle play, options, quit, back;
     private Rectangle p1, p2, p3, p4;
@@ -105,6 +105,7 @@ public class Main extends BasicGame {
         bgBig = new Image("data/menu/background_big.png");
         cpuCap = new Image("data/menu/cpu_caption.png");
         humCap = new Image("data/menu/human_caption.png");
+        offCap = new Image("data/menu/off_caption.png");
         //Animated Bomb Loading
         bombImage = new SpriteSheet("data/bomb.png", 32, 32);
         //TileSet Loading
@@ -212,23 +213,50 @@ public class Main extends BasicGame {
             {
                 if (mouseClicker.intersects(back))
                 {
-                    changingOptions = false;
+                    int playersOn = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (playerType[i] != 0)
+                        {
+                            playersOn += 1;
+                        }
+                    }
+                    if (playersOn >= 2)
+                    {
+                        changingOptions = false;
+                    }
                 }
                 if (mouseClicker.intersects(p1))
                 {
-                    humans[0] = !humans[0];
+                    playerType[0] += 1;
+                    if (playerType[0] == 3)
+                    {
+                        playerType[0] = 0;
+                    }
                 }
                 if (mouseClicker.intersects(p2))
                 {
-                    humans[1] = !humans[1];
+                    playerType[1] += 1;
+                    if (playerType[1] == 3)
+                    {
+                        playerType[1] = 0;
+                    }
                 }
                 if (mouseClicker.intersects(p3))
                 {
-                    humans[2] = !humans[2];
+                    playerType[2] += 1;
+                    if (playerType[2] == 3)
+                    {
+                        playerType[2] = 0;
+                    }
                 }
                 if (mouseClicker.intersects(p4))
                 {
-                    humans[3] = !humans[3];
+                    playerType[3] += 1;
+                    if (playerType[3] == 3)
+                    {
+                        playerType[3] = 0;
+                    }
                 }
             }
             else
@@ -238,7 +266,7 @@ public class Main extends BasicGame {
                     gameState = 1;
                     changeMusic(2);
                     bombsong.loop();
-                    newRound(humans);
+                    newRound(playerType);
                 }
                 if (mouseClicker.intersects(options))
                 {
@@ -328,13 +356,17 @@ public class Main extends BasicGame {
             tileset.getSprite(0, 1).draw(450, 150, 2.0f, new Color(50, 50, 255));
             for (int humanCheck = 0; humanCheck < 4; humanCheck ++)
             {
-                if (humans[humanCheck])
+                if (playerType[humanCheck] == 1)
                 {
                     g.drawImage(humCap, humanCheck * 100 + 130, 200);
                 }
-                else
+                if (playerType[humanCheck] == 2)
                 {
                     g.drawImage(cpuCap, humanCheck * 100 + 130, 200);
+                }
+                if (playerType[humanCheck] == 0)
+                {
+                    g.drawImage(offCap, humanCheck * 100 + 130, 200);
                 }
             }
         }
@@ -346,7 +378,7 @@ public class Main extends BasicGame {
         }
     }
 
-    private void newRound(boolean[] whichPlayersAreHuman)
+    private void newRound(int[] playerType)
     {
         board = new int[19][15];
         players = new int[19][15];
@@ -400,10 +432,58 @@ public class Main extends BasicGame {
         board[1][12] = 0;
         board[2][13] = 0;
         //Place Players
-        whiteBomber = new Player(1, 1, 1, Color.white, whichPlayersAreHuman[0]);
-        blackBomber = new Player(17, 1, 2, Color.black, whichPlayersAreHuman[1]);
-        redBomber = new Player(17, 13, 3, Color.red, whichPlayersAreHuman[2]);
-        blueBomber = new Player(1, 13, 4, Color.blue, whichPlayersAreHuman[3]);
+        if (playerType[0] == 0)
+        {
+            whiteBomber = new Player(1, 1, 1, Color.white, false);
+            whiteBomber.setAlive(false);
+        }
+        if (playerType[0] == 1)
+        {
+            whiteBomber = new Player(1, 1, 1, Color.white, true);
+        }
+        if (playerType[0] == 2)
+        {
+            whiteBomber = new Player(1, 1, 1, Color.white, false);
+        }
+        if (playerType[1] == 0)
+        {
+            blackBomber = new Player(17, 1, 2, Color.black, false);
+            blackBomber.setAlive(false);
+        }
+        if (playerType[1] == 1)
+        {
+            blackBomber = new Player(17, 1, 2, Color.black, true);
+        }
+        if (playerType[1] == 2)
+        {
+            blackBomber = new Player(17, 1, 2, Color.black, false);
+        }
+        if (playerType[2] == 0)
+        {
+            redBomber = new Player(17, 13, 3, Color.red, false);
+            redBomber.setAlive(false);
+        }
+        if (playerType[2] == 1)
+        {
+            redBomber = new Player(17, 13, 3, Color.red, true);
+        }
+        if (playerType[2] == 2)
+        {
+            redBomber = new Player(17, 13, 3, Color.red, false);
+        }
+        if (playerType[3] == 0)
+        {
+            blueBomber = new Player(1, 13, 4, Color.blue, false);
+            blueBomber.setAlive(false);
+        }
+        if (playerType[3] == 1)
+        {
+            blueBomber = new Player(1, 13, 4, Color.blue, true);
+        }
+        if (playerType[3] == 2)
+        {
+            blueBomber = new Player(1, 13, 4, Color.blue, false);
+        }
     }
 
     private void makeExplosion(int locX, int locY, int size, boolean up, boolean right, boolean left, boolean down)
