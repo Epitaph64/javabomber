@@ -24,6 +24,8 @@ public class Player {
     private boolean alive;
     private int clock;
 
+    private int deathClock;
+
     private boolean[] moving;
 
     Player(int x, int y, int number, Color color, boolean human)
@@ -37,6 +39,7 @@ public class Player {
         this.clock = 0;
         this.color = color;
         this.human = human;
+        this.deathClock = 100;
     }
 
     public int getPID()
@@ -177,5 +180,15 @@ public class Player {
     public boolean[] getDirections()
     {
         return directions;
+    }
+
+    public void setDeathClock(int clock)
+    {
+        deathClock = clock;
+    }
+
+    public int getDeathClock()
+    {
+        return deathClock;
     }
 }
