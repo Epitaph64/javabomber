@@ -1,0 +1,6 @@
+#labels Phase-Design
+Need to find some testers for OSX and Linux, as I only have access to Windows at the moment.
+
+If you can test/have tested the game please email me or leave a comment here.
+
+Also, if it doesn't work, any error logs would be greatly appreciated, so I can fix the issue in a timely manner.
