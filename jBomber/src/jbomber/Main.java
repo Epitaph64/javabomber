@@ -15,7 +15,9 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class Main extends BasicGame {
 
-    //To avoid music load times every time I want to test something.
+    //Ability to turn off music (faster load times) for development reasons.
+    //This is not a replacement for sound/music controls for the in game menu,
+    //which will be addressed soon.
     private final boolean musicOn = false;
 
     private int gameState = 0;
@@ -23,8 +25,13 @@ public class Main extends BasicGame {
     /* Game State List for Reference
      *  0 - Menu
      *  1 - In Game
+     *
+     * Future States Needed
+     *
+     *  2 - Match Results
     */
 
+    //0 - off 1 - human 2 - CPU
     private int playerType[] = {1,2,2,2};
 
     //Menu Resources
@@ -75,7 +82,10 @@ public class Main extends BasicGame {
 
     public Main()
     {
-        super("jBomber");
+        //Changed from jbomber to avoid confusion with other projects.
+        //Will most likely redo title graphic to reflect this change in an
+        //upcoming revision.
+        super("javaBomber");
     }
     
     public static void main(String[] arguments)
@@ -110,17 +120,22 @@ public class Main extends BasicGame {
         cpuCap = new Image("data/menu/cpu_caption.png");
         humCap = new Image("data/menu/human_caption.png");
         offCap = new Image("data/menu/off_caption.png");
+
         //Animations Loading
         bombImage = new SpriteSheet("data/bomb.png", 32, 32);
         deathAnim = new SpriteSheet("data/death_animation.png", 32, 32);
+
         //TileSet Loading
         tileset = new SpriteSheet("data/tileset.png", 32, 32);
+
+        //Effect Loading
         fog = new Image("data/fog.png");
-        //Sound and Music Loading
-        explosion = new Sound("data/explosion.wav");
-        
+
+        //Sound Loading
+        explosion = new Sound("data/explosion.wav");       
         bombup = new Sound("data/bombup.wav");
         fireup = new Sound("data/fireup.wav");
+
         //Rectangles to click for menu interaction
         play = new Rectangle(200, 140, playButton.getWidth(), playButton.getHeight());
         options = new Rectangle(200, 240, optionsButton.getWidth(), optionsButton.getHeight());
@@ -130,12 +145,15 @@ public class Main extends BasicGame {
         p2 = new Rectangle(230, 220, 100, 50);
         p3 = new Rectangle(330, 220, 100, 50);
         p4 = new Rectangle(430, 220, 100, 50);
-        //Setup Input
+        
+        //Music Loading
         if (musicOn)
         {
             bombsong = new Music("data/bombsong.ogg");
             bombsong.loop();
         }
+
+        //Input Loading
         input = container.getInput();
     }
 
@@ -192,6 +210,7 @@ public class Main extends BasicGame {
             drawPlayer(g, blueBomber);
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
+            //These commented out lines are for testing the AI
 //            drawTarget(g, whiteBomber);
 //            drawTarget(g, blueBomber);
 //            drawTarget(g, blackBomber);
@@ -373,6 +392,7 @@ public class Main extends BasicGame {
         if (changingOptions)
         {
             g.drawImage(backButton, 200, 340);
+            //Draw large players for player type adjustment
             tileset.getSprite(1, 1).draw(150, 150, 2.0f);
             tileset.getSprite(1, 1).draw(250, 150, 2.0f);
             tileset.getSprite(1, 1).draw(350, 150, 2.0f);
@@ -421,16 +441,13 @@ public class Main extends BasicGame {
         {
             for (int y = 1; y < 14; y++)
             {
-                board[x][y] = 0;
-            }
-        }
-        for (int x = 2; x < 18; x++)
-        {
-            for (int y = 2; y < 14; y++)
-            {
                 if (x % 2 == 0 && y % 2 == 0)
                 {
                     board[x][y] = 1;
+                }
+                else
+                {
+                    board[x][y] = 0;
                 }
             }
         }
@@ -444,7 +461,7 @@ public class Main extends BasicGame {
                 }
             }
         }
-        //Clear player areas
+        //Clear player areas (better way?)
         board[1][1] = 0;
         board[1][2] = 0;
         board[2][1] = 0;
@@ -798,7 +815,7 @@ public class Main extends BasicGame {
         }
     }
 
-    // Pretty much just placeholder script, because the AI is useless at the moment
+    //AI is using poor logic now, but can use bombs
     private void updateAI(Player player)
     {
         player.setClock(player.getClock()+1);
@@ -1133,6 +1150,9 @@ public class Main extends BasicGame {
                 {
                     player.setPhase(0);
                 }
+                //The AI becomes a bit obfuscated from here down. This is unintentional, but since this was
+                //added in around 30 minutes is why. Most likely, a lot of the AI script will be replaced
+                //as this is just a "works for now" kind of method.
                 if (!(player.getX() == player.getSafeSpot()[0] && player.getY() == player.getSafeSpot()[1]))
                 {
                     switch(player.getDirectionToSafety())
@@ -1201,7 +1221,7 @@ public class Main extends BasicGame {
 
     private void drawTarget(Graphics g, Player player)
     {
-        if (player != null)
+        if (player.getAlive())
         {
             g.setColor(player.getColor());
             g.drawRect(player.getSafeSpot()[0] * 32 + jitterX, player.getSafeSpot()[1] * 32 + jitterY, 32, 32);
@@ -1214,6 +1234,8 @@ public class Main extends BasicGame {
         boolean allowMove = false;
         if (player.getAlive())
         {
+            //I'll probably redo this, since up = 0 and clockwise from there to left being '3' in most other methods.
+            //This would be to avoid any confusion with my random number systems.
             // 2
             //1 3
             // 0
@@ -1666,6 +1688,8 @@ public class Main extends BasicGame {
         }
     }
 
+    //According to profiler, this is the most CPU intensive method (for good reason) but could use optimization
+    //If anyone has any suggestions, be sure to suggest them!
     private void drawTiles(Graphics g)
     {
         for (int x = 0; x < 19; x++)
