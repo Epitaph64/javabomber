@@ -1,0 +1,13 @@
+#summary The current controls
+#labels Featured
+
+= Controls =
+
+White Bomber: WASD to move and SPACE to bomb.
+Black Bomber: IJKL to move and SEMI-COLON to bomb.
+
+ESCAPE to leave the game, or exit the game from the menu.
+
+No current controls for red/blue bomber, but those will be implemented once 
+support for control-swapping in game is added. For now, there is no point since most
+people will not use the same control scheme for all the bombers.
