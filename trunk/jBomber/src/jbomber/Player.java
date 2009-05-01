@@ -1,6 +1,7 @@
 package jbomber;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Input;
 
 public class Player {
 
@@ -38,8 +39,8 @@ public class Player {
     {
         this.x = x;
         this.y = y;
-        this.firepower = 5;
-        this.bombAmt = 5;
+        this.firepower = 1;
+        this.bombAmt = 1;
         this.pid = number;
         this.clock = 0;
         this.color = color;
@@ -55,6 +56,97 @@ public class Player {
             this.human = false;
             this.deathClock = 100;
         }
+    }
+
+    public boolean move(int dirX, int dirY, Main main)
+    {
+        boolean moveTile = false;
+        boolean allowMove = false;
+        if (alive)
+        {
+            //I'll probably redo this, since up = 0 and clockwise from there to left being '3' in most other methods.
+            //This would be to avoid any confusion with my random number systems.
+            // 2
+            //1 3
+            // 0
+            if (human)
+            {
+                if (clock == 0)
+                {
+                    allowMove = true;
+                }
+            }
+            else
+            {
+                allowMove = true;
+            }
+            if (offsetX == 0 && offsetY == 0 && allowMove)
+            {
+                if (
+                        x + dirX >= 0 &&
+                        x + dirX < 19 &&
+                        y + dirY >= 0 &&
+                        y < 15
+                   )
+                {
+                    if (dirX > 0)
+                    {
+                        direction = 3;
+                    }
+                    if (dirX < 0)
+                    {
+                        direction = 1;
+                    }
+                    if (dirY > 0)
+                    {
+                        direction = 0;
+                    }
+                    if (dirY < 0)
+                    {
+                        direction = 2;
+                    }
+                    if (main.getBoard()[x + dirX][y + dirY] == 0 && main.getPlayerBoard()[x + dirX][y + dirY] == 0)
+                    {
+                        moveTile = true;
+                    }
+                    else if (main.getBoard()[x + dirX][y + dirY] == 5)
+                    {
+                        firepower ++;
+                        main.playSound("fireup");
+                        moveTile = true;
+                    }
+                    else if (main.getBoard()[x + dirX][y + dirY] == 6)
+                    {
+                        bombAmt ++;
+                        main.playSound("bombup");
+                        moveTile = true;
+                    }
+                    if (moveTile)
+                    {
+                        offsetTileX = dirX;
+                        offsetTileY = dirY;
+                        if (human)
+                        {
+                            if (pid == 1)
+                            {
+                                if (main.getInput().isKeyDown(Input.KEY_SPACE) && bombAmt > 0)
+                                {
+                                    clock = 15;
+                                }
+                            }
+                            if (pid == 2)
+                            {
+                                if (main.getInput().isKeyDown(Input.KEY_SEMICOLON) && bombAmt > 0)
+                                {
+                                    clock = 15;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return moveTile;
     }
 
     public int getPID()

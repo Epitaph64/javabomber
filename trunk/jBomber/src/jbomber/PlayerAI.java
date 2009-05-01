@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package jbomber;
 
 public class PlayerAI {
@@ -142,7 +137,7 @@ public class PlayerAI {
                     {
                         case 0:
                         {
-                            main.movePlayer(player, 0, -1);
+                            player.move(0, -1, main);
                             player.setDirectionToAttack(direction);
                             player.setDirectionToSafety(2);
                             player.setClock(0);
@@ -151,7 +146,7 @@ public class PlayerAI {
                         }
                         case 1:
                         {
-                            main.movePlayer(player, 1, 0);
+                            player.move(1, 0, main);
                             player.setDirectionToAttack(direction);
                             player.setDirectionToSafety(3);
                             player.setClock(0);
@@ -160,7 +155,7 @@ public class PlayerAI {
                         }
                         case 2:
                         {
-                            main.movePlayer(player, 0, 1);
+                            player.move(0, 1, main);
                             player.setDirectionToAttack(direction);
                             player.setDirectionToSafety(0);
                             player.setClock(0);
@@ -169,7 +164,7 @@ public class PlayerAI {
                         }
                         case 3:
                         {
-                            main.movePlayer(player, -1, 0);
+                            player.move(-1, 0, main);
                             player.setDirectionToAttack(direction);
                             player.setDirectionToSafety(1);
                             player.setClock(0);
@@ -202,25 +197,25 @@ public class PlayerAI {
                     {
                         case 0:
                         {
-                            main.movePlayer(player, 0, -1);
+                            player.move(0, -1, main);
                             player.setClock(0);
                             break;
                         }
                         case 1:
                         {
-                            main.movePlayer(player, 1, 0);
+                            player.move(1, 0, main);
                             player.setClock(0);
                             break;
                         }
                         case 2:
                         {
-                            main.movePlayer(player, 0, 1);
+                            player.move(0, 1, main);
                             player.setClock(0);
                             break;
                         }
                         case 3:
                         {
-                            main.movePlayer(player, -1, 0);
+                            player.move(-1, 0, main);
                             player.setClock(0);
                             break;
                         }
@@ -263,28 +258,28 @@ public class PlayerAI {
                     {
                         case 0:
                         {
-                            boolean b = main.movePlayer(player, 0, -1);
+                            boolean b = player.move(0, -1, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
                         }
                         case 1:
                         {
-                            boolean b = main.movePlayer(player, 1, 0);
+                            boolean b = player.move(1, 0, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
                         }
                         case 2:
                         {
-                            boolean b = main.movePlayer(player, 0, 1);
+                            boolean b = player.move(0, 1, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
                         }
                         case 3:
                         {
-                            boolean b = main.movePlayer(player, -1, 0);
+                            boolean b = player.move(-1, 0, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
@@ -298,28 +293,28 @@ public class PlayerAI {
                     {
                         case 0:
                         {
-                            boolean b = main.movePlayer(player, 0, -1);
+                            boolean b = player.move(0, -1, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
                         }
                         case 1:
                         {
-                            boolean b = main.movePlayer(player, 1, 0);
+                            boolean b = player.move(1, 0, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
                         }
                         case 2:
                         {
-                            boolean b = main.movePlayer(player, 0, 1);
+                            boolean b = player.move(0, 1, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
                         }
                         case 3:
                         {
-                            boolean b = main.movePlayer(player, -1, 0);
+                            boolean b = player.move(-1, 0, main);
                             if (!b) bombPlaced = true;
                             player.setClock(0);
                             break;
@@ -356,12 +351,12 @@ public class PlayerAI {
                     {
                         if (player.getSafeSpot()[1] < player.getY())
                         {
-                            main.movePlayer(player, 0, -1);
+                            player.move(0, -1, main);
                             easySolution = true;
                         }
                         if (player.getSafeSpot()[1] > player.getY())
                         {
-                            main.movePlayer(player, 0, 1);
+                           player.move(0, 1, main);
                             easySolution = true;
                         }
                     }
@@ -369,12 +364,12 @@ public class PlayerAI {
                     {
                         if (player.getSafeSpot()[0] < player.getX())
                         {
-                            main.movePlayer(player, -1, 0);
+                            player.move(-1, 0, main);
                             easySolution = true;
                         }
                         if (player.getSafeSpot()[0] > player.getX())
                         {
-                            main.movePlayer(player, 1, 0);
+                            player.move(1, 0, main);
                             easySolution = true;
                         }
                     }
@@ -385,16 +380,16 @@ public class PlayerAI {
                         {
                             case 0:
                             {
-                                boolean b = main.movePlayer(player, 0, -1);
+                                boolean b = player.move(0, -1, main);
                                 if (!b)
                                 {
-                                    b = main.movePlayer(player, -1, 0);
+                                    b = player.move(-1, 0, main);
                                     if (!b)
                                     {
-                                        b = main.movePlayer(player, 1, 0);
+                                        b = player.move(1, 0, main);
                                         if (!b)
                                         {
-                                            main.movePlayer(player, 0, 1);
+                                            player.move(0, 1, main);
                                         }
                                     }
                                 }
@@ -403,16 +398,16 @@ public class PlayerAI {
                             }
                             case 1:
                             {
-                                boolean b = main.movePlayer(player, 1, 0);
+                                boolean b = player.move(1, 0, main);
                                 if (!b)
                                 {
-                                    b = main.movePlayer(player, 0, -1);
+                                    b = player.move(0, -1, main);
                                     if (!b)
                                     {
-                                        b = main.movePlayer(player, 0, 1);
+                                        b = player.move(0, 1, main);
                                         if (!b)
                                         {
-                                            main.movePlayer(player, -1, 0);
+                                            player.move(-1, 0, main);
                                         }
                                     }
                                 }
@@ -421,16 +416,16 @@ public class PlayerAI {
                             }
                             case 2:
                             {
-                                boolean b = main.movePlayer(player, 0, 1);
+                                boolean b = player.move(0, 1, main);
                                 if (!b)
                                 {
-                                    b = main.movePlayer(player, -1, 0);
+                                    b = player.move(-1, 0, main);
                                     if (!b)
                                     {
-                                        b = main.movePlayer(player, 1, 0);
+                                        b = player.move(1, 0, main);
                                         if (!b)
                                         {
-                                            main.movePlayer(player, 0, -1);
+                                            player.move(0, -1, main);
                                         }
                                     }
                                 }
@@ -439,16 +434,16 @@ public class PlayerAI {
                             }
                             case 3:
                             {
-                                boolean b = main.movePlayer(player, -1, 0);
+                                boolean b = player.move(-1, 0, main);
                                 if (!b)
                                 {
-                                    b = main.movePlayer(player, 0, -1);
+                                    b = player.move(0, -1, main);
                                     if (!b)
                                     {
-                                        b = main.movePlayer(player, 0, 1);
+                                        b = player.move(0, 1, main);
                                         if (!b)
                                         {
-                                            main.movePlayer(player, 1, 0);
+                                            player.move(1, 0, main);
                                         }
                                     }
                                 }
