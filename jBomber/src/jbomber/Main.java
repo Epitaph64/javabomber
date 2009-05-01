@@ -56,8 +56,8 @@ public class Main extends BasicGame {
     private float fogX = 0;
     
     //These affect the whole screen offsets (for shaking)
-    private int jitterX = 16;
-    private int jitterY = 0;
+    public int jitterX = 16;
+    public int jitterY = 0;
     private boolean shake;
     private int shakeMagnitude;
     private boolean shakeRight = true;
@@ -70,14 +70,14 @@ public class Main extends BasicGame {
 
     public static MersenneTwisterFast mt = new MersenneTwisterFast();
 
-    private int[][] board = new int[19][15];
-    private int[][] players = new int[19][15];
-    private Bomb[][] bombs = new Bomb[19][15];
-    private Fire[][] fire = new Fire[19][15];
+    public int[][] board = new int[19][15];
+    public int[][] players = new int[19][15];
+    public Bomb[][] bombs = new Bomb[19][15];
+    public Fire[][] fire = new Fire[19][15];
 
-    private SpriteSheet tileset;
-    private SpriteSheet bombImage;
-    private SpriteSheet deathAnim;
+    public SpriteSheet tileset;
+    public SpriteSheet bombImage;
+    public SpriteSheet deathAnim;
     
     private Input input;
     private boolean changingOptions = false;
@@ -208,10 +208,10 @@ public class Main extends BasicGame {
         {
             drawTiles(g);
             drawFire(g);
-            drawPlayer(g, whiteBomber);
-            drawPlayer(g, blackBomber);
-            drawPlayer(g, redBomber);
-            drawPlayer(g, blueBomber);
+            whiteBomber.draw(g, this);
+            blackBomber.draw(g, this);
+            redBomber.draw(g, this);
+            blueBomber.draw(g, this);
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
             //These commented out lines are for testing the AI
@@ -1006,44 +1006,6 @@ public class Main extends BasicGame {
         }
     }
 
-    private void drawDead(Graphics g, Player player)
-    {
-        if (player.getDeathClock() > 0)
-        {
-            if (player.getDeathClock() >= 85)
-            {
-                deathAnim.getSprite(1, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
-                deathAnim.getSprite(0, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
-            }
-            if (player.getDeathClock() < 85 && player.getDeathClock() >= 65)
-            {
-                deathAnim.getSprite(3, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
-                deathAnim.getSprite(2, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
-            }
-            if (player.getDeathClock() < 65 && player.getDeathClock() >= 45)
-            {
-                deathAnim.getSprite(5, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
-                deathAnim.getSprite(4, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
-            }
-            if (player.getDeathClock() < 45 && player.getDeathClock() >= 30)
-            {
-                deathAnim.getSprite(7, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
-                deathAnim.getSprite(6, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
-            }
-            if (player.getDeathClock() < 30 && player.getDeathClock() >= 15)
-            {
-                deathAnim.getSprite(9, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
-                deathAnim.getSprite(8, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
-            }
-            if (player.getDeathClock() < 15 && player.getDeathClock() >= 0)
-            {
-                deathAnim.getSprite(11, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY);
-                deathAnim.getSprite(10, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
-            }
-            player.setDeathClock(player.getDeathClock() - 1);
-        }
-    }
-
     private void drawFire(Graphics g)
     {
         // A diagram to show which numbers coordinate to which bomb direction graphic
@@ -1175,26 +1137,6 @@ public class Main extends BasicGame {
         }
     }
 
-    private void drawPlayer(Graphics g, Player player)
-    {
-        if (player.getAlive())
-        {
-            int tileOpaque = 2 * player.getDirection() + 1;
-            int tileColored = 2 * player.getDirection();
-            tileset.getSprite((tileOpaque), 1).draw(
-                    player.getX() * 32 + jitterX + player.getOffSetX(),
-                    player.getY() * 32 + jitterY + player.getOffSetY());
-            tileset.getSprite((tileColored),1).draw(
-                    player.getX() * 32 + jitterX + player.getOffSetX(),
-                    player.getY() * 32 + jitterY + player.getOffSetY(),
-                    player.getColor());
-        }
-        else if (player.getDeathClock() > 0)
-        {
-            drawDead(g, player);
-        }
-    }
-
     private void flushPlayerReferences(int PID)
     {
         for (int x = 0; x < 19; x++)
@@ -1207,26 +1149,6 @@ public class Main extends BasicGame {
                 }
             }
         }
-    }
-
-    public int[][] getPlayerBoard()
-    {
-        return players;
-    }
-
-    public int[][] getBoard()
-    {
-        return board;
-    }
-
-    public Bomb[][] getBombs()
-    {
-        return bombs;
-    }
-
-    public Fire[][] getFire()
-    {
-        return fire;
     }
 
     public Input getInput()

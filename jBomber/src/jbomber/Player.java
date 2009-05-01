@@ -1,6 +1,7 @@
 package jbomber;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 
 public class Player {
@@ -105,17 +106,17 @@ public class Player {
                     {
                         direction = 2;
                     }
-                    if (main.getBoard()[x + dirX][y + dirY] == 0 && main.getPlayerBoard()[x + dirX][y + dirY] == 0)
+                    if (main.board[x + dirX][y + dirY] == 0 && main.players[x + dirX][y + dirY] == 0)
                     {
                         moveTile = true;
                     }
-                    else if (main.getBoard()[x + dirX][y + dirY] == 5)
+                    else if (main.board[x + dirX][y + dirY] == 5)
                     {
                         firepower ++;
                         main.playSound("fireup");
                         moveTile = true;
                     }
-                    else if (main.getBoard()[x + dirX][y + dirY] == 6)
+                    else if (main.board[x + dirX][y + dirY] == 6)
                     {
                         bombAmt ++;
                         main.playSound("bombup");
@@ -153,11 +154,11 @@ public class Player {
     {
         if (alive)
         {
-            if (main.getPlayerBoard()[x+offsetTileX][y+offsetTileY] == 0)
+            if (main.players[x+offsetTileX][y+offsetTileY] == 0)
             {
-                main.getPlayerBoard()[x+offsetTileX][y+offsetTileY] = pid;
+                main.players[x+offsetTileX][y+offsetTileY] = pid;
             }
-            if (main.getPlayerBoard()[x+offsetTileX][y+offsetTileY] == pid)
+            if (main.players[x+offsetTileX][y+offsetTileY] == pid)
             {
                 if (offsetTileX == 1)
                 {
@@ -177,32 +178,32 @@ public class Player {
                 }
                 if (offsetX >= 32)
                 {
-                    main.getPlayerBoard()[x][y] = 0;
-                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    main.players[x][y] = 0;
+                    main.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetX = 0;
                     offsetTileX = 0;
                     x += 1;
                 }
                 if (offsetY >= 32)
                 {
-                    main.getPlayerBoard()[x][y] = 0;
-                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    main.players[x][y] = 0;
+                    main.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetY = 0;
                     offsetTileY = 0;
                     y += 1;
                 }
                 if (offsetX <= -32)
                 {
-                    main.getPlayerBoard()[x][y] = 0;
-                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    main.players[x][y] = 0;
+                    main.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetX = 0;
                     offsetTileX = 0;
                     x += -1;
                 }
                 if (offsetY <= -32)
                 {
-                    main.getPlayerBoard()[x][y] = 0;
-                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    main.players[x][y] = 0;
+                    main.board[x+offsetTileX][y+offsetTileY] = 0;
                     offsetY = 0;
                     offsetTileY = 0;
                     y += -1;
@@ -224,12 +225,12 @@ public class Player {
         {
             if (offsetTileX == 0 && offsetTileY == 0)
             {
-                if (main.getBoard()[x][y] == 0)
+                if (main.board[x][y] == 0)
                 {
                     if (bombAmt > 0)
                     {
-                        main.getBombs()[x][y] = new Bomb(150, firepower, this);
-                        main.getBoard()[x][y] = 3;
+                        main.bombs[x][y] = new Bomb(150, firepower, this);
+                        main.board[x][y] = 3;
                         bombAmt --;
                         return true;
                     }
@@ -237,6 +238,64 @@ public class Player {
             }
         }
         return false;
+    }
+
+    public void draw(Graphics g, Main main)
+    {
+        if (alive)
+        {
+            int tileOpaque = 2 * direction + 1;
+            int tileColored = 2 * direction;
+            main.tileset.getSprite((tileOpaque), 1).draw(
+                    x * 32 + main.jitterX + offsetX,
+                    y * 32 + main.jitterY + offsetY);
+            main.tileset.getSprite((tileColored),1).draw(
+                    x * 32 + main.jitterX + offsetX,
+                    y * 32 + main.jitterY + offsetY,
+                    color);
+        }
+        else if (deathClock > 0)
+        {
+            drawDead(g, main);
+        }
+    }
+
+    private void drawDead(Graphics g, Main main)
+    {
+        if (deathClock > 0)
+        {
+            if (deathClock >= 85)
+            {
+                main.deathAnim.getSprite(1, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY);
+                main.deathAnim.getSprite(0, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY, color);
+            }
+            if (deathClock < 85 && deathClock >= 65)
+            {
+                main.deathAnim.getSprite(3, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY);
+                main.deathAnim.getSprite(2, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY, color);
+            }
+            if (deathClock < 65 && deathClock >= 45)
+            {
+                main.deathAnim.getSprite(5, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY);
+                main.deathAnim.getSprite(4, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY, color);
+            }
+            if (deathClock < 45 && deathClock >= 30)
+            {
+                main.deathAnim.getSprite(7, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY);
+                main.deathAnim.getSprite(6, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY, color);
+            }
+            if (deathClock < 30 && deathClock >= 15)
+            {
+                main.deathAnim.getSprite(9, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY);
+                main.deathAnim.getSprite(8, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY, color);
+            }
+            if (deathClock < 15 && deathClock >= 0)
+            {
+                main.deathAnim.getSprite(11, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY);
+                main.deathAnim.getSprite(10, 0).draw(x * 32 + main.jitterX, y * 32 + main.jitterY, color);
+            }
+            deathClock --;
+        }
     }
 
     public int getPID()

@@ -4,10 +4,10 @@ public class PlayerAI {
 
     public void updateAI(Player player, Main main)
     {
-        int[][] board = main.getBoard();
-        int[][] players = main.getPlayerBoard();
-        Bomb[][] bombs = main.getBombs();
-        Fire[][] fire = main.getFire();
+        int[][] board = main.board;
+        int[][] players = main.players;
+        Bomb[][] bombs = main.bombs;
+        Fire[][] fire = main.fire;
         player.setClock(player.getClock()+1);
         if (player.getClock() > 15 && player.getAlive() && player.getOffSetTileX() == 0 && player.getOffSetTileY() == 0)
         {
