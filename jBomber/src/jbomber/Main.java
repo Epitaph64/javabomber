@@ -32,9 +32,9 @@ public class Main extends BasicGame {
     */
 
     //0 - off 1 - human 2 - CPU
-    private int playerType[] = {2,2,2,2};
+    private int playerType[] = {1,2,0,0};
 
-    public PlayerAI playerAI;
+    private PlayerAI playerAI;
 
     //Menu Resources
     private Image bgSmall;
@@ -215,14 +215,14 @@ public class Main extends BasicGame {
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
             //These commented out lines are for testing the AI
-            drawTarget(g, whiteBomber);
-            drawTarget(g, blueBomber);
-            drawTarget(g, blackBomber);
-            drawTarget(g, redBomber);
-            drawPlayerPhase(g, whiteBomber);
-            drawPlayerPhase(g, blackBomber);
-            drawPlayerPhase(g, redBomber);
-            drawPlayerPhase(g, blueBomber);
+//            drawTarget(g, whiteBomber);
+//            drawTarget(g, blueBomber);
+//            drawTarget(g, blackBomber);
+//            drawTarget(g, redBomber);
+//            drawPlayerPhase(g, whiteBomber);
+//            drawPlayerPhase(g, blackBomber);
+//            drawPlayerPhase(g, redBomber);
+//            drawPlayerPhase(g, blueBomber);
         }
     }
 
@@ -831,97 +831,6 @@ public class Main extends BasicGame {
         }
     }
 
-    public boolean movePlayer(Player player, int dirX, int dirY)
-    {
-        boolean moveTile = false;
-        boolean allowMove = false;
-        if (player.getAlive())
-        {
-            //I'll probably redo this, since up = 0 and clockwise from there to left being '3' in most other methods.
-            //This would be to avoid any confusion with my random number systems.
-            // 2
-            //1 3
-            // 0
-            if (player.getHuman())
-            {
-                if (player.getClock() == 0)
-                {
-                    allowMove = true;
-                }
-            }
-            else
-            {
-                allowMove = true;
-            }
-            if (player.getOffSetX() == 0 && player.getOffSetY() == 0 && allowMove)
-            {
-                if (
-                        player.getX() + dirX >= 0 &&
-                        player.getX() + dirX < 19 &&
-                        player.getY() + dirY >= 0 &&
-                        player.getY() < 15
-                   )
-                {
-                    if (dirX > 0)
-                    {
-                        player.setDirection(3);
-                    }
-                    if (dirX < 0)
-                    {
-                        player.setDirection(1);
-                    }
-                    if (dirY > 0)
-                    {
-                        player.setDirection(0);
-                    }
-                    if (dirY < 0)
-                    {
-                        player.setDirection(2);
-                    }
-                    if (board[player.getX() + dirX][player.getY() + dirY] == 0 && players[player.getX() + dirX][player.getY() + dirY] == 0)
-                    {
-                        moveTile = true;
-                    }
-                    else if (board[player.getX() + dirX][player.getY() + dirY] == 5)
-                    {
-                        player.setFirePower(player.getFirePower()+1);
-                        fireup.play();
-                        moveTile = true;
-                    }
-                    else if (board[player.getX() + dirX][player.getY() + dirY] == 6)
-                    {
-                        player.setBombAmt(player.getBombAmt()+1);
-                        bombup.play();
-                        moveTile = true;
-                    }
-                    if (moveTile)
-                    {
-                        player.setOffSetTileX(dirX);
-                        player.setOffSetTileY(dirY);
-                        if (player.getHuman())
-                        {
-                            if (player.getPID() == 1)
-                            {
-                                if (input.isKeyDown(Input.KEY_SPACE) && player.getBombAmt() > 0)
-                                {
-                                    player.setClock(15);
-                                }
-                            }
-                            if (player.getPID() == 2)
-                            {
-                                if (input.isKeyDown(Input.KEY_SEMICOLON) && player.getBombAmt() > 0)
-                                {
-                                    player.setClock(15);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return moveTile;
-    }
-
     public boolean placeBomb(Player player)
     {
         if (player.getAlive())
@@ -964,19 +873,19 @@ public class Main extends BasicGame {
             {
                 if (input.isKeyDown(Input.KEY_W))
                 {
-                    movePlayer(whiteBomber, 0, -1);
+                    whiteBomber.move(0, -1, this);
                 }
                 if (input.isKeyDown(Input.KEY_A))
                 {
-                    movePlayer(whiteBomber, -1, 0);
+                    whiteBomber.move(-1, 0, this);
                 }
                 if (input.isKeyDown(Input.KEY_S))
                 {
-                    movePlayer(whiteBomber, 0, 1);
+                    whiteBomber.move(0, 1, this);
                 }
                 if (input.isKeyDown(Input.KEY_D))
                 {
-                    movePlayer(whiteBomber, 1, 0);
+                    whiteBomber.move(1, 0, this);
                 }
                 if (input.isKeyDown(Input.KEY_SPACE))
                 {
@@ -990,19 +899,19 @@ public class Main extends BasicGame {
             {
                 if (input.isKeyDown(Input.KEY_I))
                 {
-                    movePlayer(blackBomber, 0, -1);
+                    blackBomber.move(0, -1, this);
                 }
                 if (input.isKeyDown(Input.KEY_J))
                 {
-                    movePlayer(blackBomber, -1, 0);
+                    blackBomber.move(-1, 0, this);
                 }
                 if (input.isKeyDown(Input.KEY_K))
                 {
-                    movePlayer(blackBomber, 0, 1);
+                    blackBomber.move(0, 1, this);
                 }
                 if (input.isKeyDown(Input.KEY_L))
                 {
-                    movePlayer(blackBomber, 1, 0);
+                    blackBomber.move(1, 0, this);
                 }
                 if (input.isKeyDown(Input.KEY_SEMICOLON))
                 {
@@ -1428,5 +1337,22 @@ public class Main extends BasicGame {
             }
         }
         return b;
+    }
+
+    public Input getInput()
+    {
+        return input;
+    }
+
+    public void playSound(String sound)
+    {
+        if (sound.equals("bombup"))
+        {
+            bombup.play();
+        }
+        if (sound.equals("fireup"))
+        {
+            fireup.play();
+        }
     }
 }
