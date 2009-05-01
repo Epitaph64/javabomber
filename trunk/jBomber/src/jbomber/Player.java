@@ -10,6 +10,7 @@ public class Player {
     private int directionToSafety;
     private int directionToAttack;
     private int phase;
+    private int patience;
 
     private boolean[] directions;
 
@@ -245,5 +246,15 @@ public class Player {
     public int getPhase()
     {
         return phase;
+    }
+
+    public void setPatience(int pat)
+    {
+        patience = pat;
+    }
+
+    public int getPatience()
+    {
+        return patience;
     }
 }

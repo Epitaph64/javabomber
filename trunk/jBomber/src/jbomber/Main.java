@@ -32,7 +32,7 @@ public class Main extends BasicGame {
     */
 
     //0 - off 1 - human 2 - CPU
-    private int playerType[] = {1,2,2,2};
+    private int playerType[] = {2,2,2,2};
 
     //Menu Resources
     private Image bgSmall;
@@ -211,14 +211,14 @@ public class Main extends BasicGame {
             g.drawImage(fog, fogX + jitterX, 0);
             g.drawImage(fog, fogX + 640 + jitterX, 0);
             //These commented out lines are for testing the AI
-//            drawTarget(g, whiteBomber);
-//            drawTarget(g, blueBomber);
-//            drawTarget(g, blackBomber);
-//            drawTarget(g, redBomber);
-//            drawPlayerPhase(g, whiteBomber);
-//            drawPlayerPhase(g, blackBomber);
-//            drawPlayerPhase(g, redBomber);
-//            drawPlayerPhase(g, blueBomber);
+            drawTarget(g, whiteBomber);
+            drawTarget(g, blueBomber);
+            drawTarget(g, blackBomber);
+            drawTarget(g, redBomber);
+            drawPlayerPhase(g, whiteBomber);
+            drawPlayerPhase(g, blackBomber);
+            drawPlayerPhase(g, redBomber);
+            drawPlayerPhase(g, blueBomber);
         }
     }
 
@@ -1137,6 +1137,7 @@ public class Main extends BasicGame {
                     {
                         placeBomb(player);
                         player.setPhase(2);
+                        player.setPatience(10);
                     }
                     else
                     {
@@ -1146,73 +1147,131 @@ public class Main extends BasicGame {
             }
             if (player.getPhase() == 2)
             {
-                if (player.getClock() > 200)
+                if (player.getPatience() <= 0)
                 {
                     player.setPhase(0);
                 }
                 //The AI becomes a bit obfuscated from here down. This is unintentional, but since this was
                 //added in around 30 minutes is why. Most likely, a lot of the AI script will be replaced
                 //as this is just a "works for now" kind of method.
-                if (!(player.getX() == player.getSafeSpot()[0] && player.getY() == player.getSafeSpot()[1]))
+                if ( ! (player.getX() == player.getSafeSpot()[0] && player.getY() == player.getSafeSpot()[1]))
                 {
-                    switch(player.getDirectionToSafety())
+                    boolean easySolution = false;
+                    if (player.getSafeSpot()[0] == player.getX() && Math.abs(player.getSafeSpot()[1] - player.getY()) == 1)
                     {
-                        case 0:
+                        if (player.getSafeSpot()[1] < player.getY())
                         {
-                            boolean b = movePlayer(player, 0, -1);
-                            if (!b)
+                            movePlayer(player, 0, -1);
+                            easySolution = true;
+                        }
+                        if (player.getSafeSpot()[1] > player.getY())
+                        {
+                            movePlayer(player, 0, 1);
+                            easySolution = true;
+                        }
+                    }
+                    if (player.getSafeSpot()[1] == player.getY() && Math.abs(player.getSafeSpot()[0] - player.getX()) == 1)
+                    {
+                        if (player.getSafeSpot()[0] < player.getX())
+                        {
+                            movePlayer(player, -1, 0);
+                            easySolution = true;
+                        }
+                        if (player.getSafeSpot()[0] > player.getX())
+                        {
+                            movePlayer(player, 1, 0);
+                            easySolution = true;
+                        }
+                    }
+                    if (! easySolution)
+                    {
+                        player.setPatience(player.getPatience()-1);
+                        switch(player.getDirectionToSafety())
+                        {
+                            case 0:
                             {
-                                b = movePlayer(player, -1, 0);
+                                boolean b = movePlayer(player, 0, -1);
                                 if (!b)
                                 {
-                                    movePlayer(player, 1, 0);
+                                    b = movePlayer(player, -1, 0);
+                                    if (!b)
+                                    {
+                                        b = movePlayer(player, 1, 0);
+                                        if (!b)
+                                        {
+                                            movePlayer(player, 0, 1);
+                                        }
+                                    }
                                 }
+                                player.setClock(0);
+                                break;
                             }
-                            player.setClock(0);
-                            break;
-                        }
-                        case 1:
-                        {
-                            boolean b = movePlayer(player, 1, 0);
-                            if (!b)
+                            case 1:
                             {
-                                b = movePlayer(player, 0, -1);
+                                boolean b = movePlayer(player, 1, 0);
                                 if (!b)
                                 {
-                                    movePlayer(player, 0, 1);
+                                    b = movePlayer(player, 0, -1);
+                                    if (!b)
+                                    {
+                                        b = movePlayer(player, 0, 1);
+                                        if (!b)
+                                        {
+                                            movePlayer(player, -1, 0);
+                                        }
+                                    }
                                 }
+                                player.setClock(0);
+                                break;
                             }
-                            player.setClock(0);
-                            break;
-                        }
-                        case 2:
-                        {
-                            boolean b = movePlayer(player, 0, 1);
-                            if (!b)
+                            case 2:
                             {
-                                b = movePlayer(player, -1, 0);
+                                boolean b = movePlayer(player, 0, 1);
                                 if (!b)
                                 {
-                                    movePlayer(player, 1, 0);
+                                    b = movePlayer(player, -1, 0);
+                                    if (!b)
+                                    {
+                                        b = movePlayer(player, 1, 0);
+                                        if (!b)
+                                        {
+                                            movePlayer(player, 0, -1);
+                                        }
+                                    }
                                 }
+                                player.setClock(0);
+                                break;
                             }
-                            player.setClock(0);
-                            break;
-                        }
-                        case 3:
-                        {
-                            boolean b = movePlayer(player, -1, 0);
-                            if (!b)
+                            case 3:
                             {
-                                b = movePlayer(player, 0, -1);
+                                boolean b = movePlayer(player, -1, 0);
                                 if (!b)
                                 {
-                                    movePlayer(player, 0, 1);
+                                    b = movePlayer(player, 0, -1);
+                                    if (!b)
+                                    {
+                                        b = movePlayer(player, 0, 1);
+                                        if (!b)
+                                        {
+                                            movePlayer(player, 1, 0);
+                                        }
+                                    }
                                 }
+                                player.setClock(0);
+                                break;
                             }
-                            player.setClock(0);
-                            break;
                         }
+                    }
+                    else
+                    {
+                        player.setClock(0);
+                    }
+                }
+                else
+                {
+                    if (player.getClock() > 200)
+                    {
+                        player.setPhase(0);
                     }
                 }
             }
