@@ -6,8 +6,8 @@ public class PlayerAI {
     {
         int[][] board = main.getBoard();
         int[][] players = main.getPlayerBoard();
-        boolean[][] bombs = main.getBombExistence();
-        boolean[][] fire = main.getFireExistence();
+        Bomb[][] bombs = main.getBombs();
+        Fire[][] fire = main.getFire();
         player.setClock(player.getClock()+1);
         if (player.getClock() > 15 && player.getAlive() && player.getOffSetTileX() == 0 && player.getOffSetTileY() == 0)
         {
@@ -31,11 +31,11 @@ public class PlayerAI {
                         {
                             currentView[x][y] = 2;
                         }
-                        if (fire[x][y] == true)
+                        if (fire[x][y] != null)
                         {
                             currentView[x][y] = 1;
                         }
-                        if (bombs[x][y] == true)
+                        if (bombs[x][y] != null)
                         {
                             currentView[x][y] = 3;
                         }
@@ -241,11 +241,11 @@ public class PlayerAI {
                         {
                             currentView[x][y] = 2;
                         }
-                        if (fire[x][y] == true)
+                        if (fire[x][y] != null)
                         {
                             currentView[x][y] = 1;
                         }
-                        if (bombs[x][y] == true)
+                        if (bombs[x][y] != null)
                         {
                             currentView[x][y] = 3;
                         }
@@ -325,7 +325,7 @@ public class PlayerAI {
                 {
                     if (player.getX() != player.getSafeSpot()[0] && player.getY() != player.getSafeSpot()[1])
                     {
-                        main.placeBomb(player);
+                        player.placeBomb(main);
                         player.setPhase(2);
                         player.setPatience(10);
                     }
