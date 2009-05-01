@@ -181,10 +181,10 @@ public class Main extends BasicGame {
             checkPlayer(redBomber);
             checkPlayer(blueBomber);
             //Shift any players currently in transition between tiles
-            shiftPlayer(whiteBomber);
-            shiftPlayer(blackBomber);
-            shiftPlayer(redBomber);
-            shiftPlayer(blueBomber);
+            whiteBomber.shift(this);
+            blackBomber.shift(this);
+            redBomber.shift(this);
+            blueBomber.shift(this);
             //Update the screen shake effect if necessary
             checkShake();
             //Update the fog effect
@@ -831,27 +831,6 @@ public class Main extends BasicGame {
         }
     }
 
-    public boolean placeBomb(Player player)
-    {
-        if (player.getAlive())
-        {
-            if (player.getOffSetTileX() == 0 && player.getOffSetTileY() == 0)
-            {
-                if (board[player.getX()][player.getY()] == 0 && player.getAlive())
-                {
-                    if (player.getBombAmt() > 0)
-                    {
-                        bombs[player.getX()][player.getY()] = new Bomb(150, player.getFirePower(), player);
-                        board[player.getX()][player.getY()] = 3;
-                        player.setBombAmt(player.getBombAmt()-1);
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private void checkInputGame(GameContainer container) throws SlickException
     {
         if (input.isKeyPressed(Input.KEY_ESCAPE))
@@ -889,7 +868,7 @@ public class Main extends BasicGame {
                 }
                 if (input.isKeyDown(Input.KEY_SPACE))
                 {
-                    placeBomb(whiteBomber);
+                    whiteBomber.placeBomb(this);
                 }
             }
         }
@@ -915,7 +894,7 @@ public class Main extends BasicGame {
                 }
                 if (input.isKeyDown(Input.KEY_SEMICOLON))
                 {
-                    placeBomb(blackBomber);
+                    blackBomber.placeBomb(this);
                 }
             }
         }
@@ -1062,73 +1041,6 @@ public class Main extends BasicGame {
                 deathAnim.getSprite(10, 0).draw(player.getX() * 32 + jitterX, player.getY() * 32 + jitterY, player.getColor());
             }
             player.setDeathClock(player.getDeathClock() - 1);
-        }
-    }
-
-    private void shiftPlayer(Player player)
-    {
-        if (player.getAlive())
-        {
-            if (players[player.getX()+player.getOffSetTileX()][player.getY()+player.getOffSetTileY()] == 0)
-            {
-                players[player.getX()+player.getOffSetTileX()][player.getY()+player.getOffSetTileY()] = player.getPID();
-            }
-            if (players[player.getX()+player.getOffSetTileX()][player.getY()+player.getOffSetTileY()] == player.getPID())
-            {
-                if (player.getOffSetTileX() == 1)
-                {
-                    player.setOffSetX(player.getOffSetX() + 3);
-                }
-                if (player.getOffSetTileX() == -1)
-                {
-                    player.setOffSetX(player.getOffSetX() - 3);
-                }
-                if (player.getOffSetTileY() == 1)
-                {
-                    player.setOffSetY(player.getOffSetY() + 3);
-                }
-                if (player.getOffSetTileY() == -1)
-                {
-                    player.setOffSetY(player.getOffSetY() - 3);
-                }
-                if (player.getOffSetX() >= 32)
-                {
-                    players[player.getX()][player.getY()] = 0;
-                    board[player.getX() + player.getOffSetTileX()][player.getY() + player.getOffSetTileY()] = 0;
-                    player.setOffSetX(0);
-                    player.setOffSetTileX(0);
-                    player.setX(player.getX()+1);
-                }
-                if (player.getOffSetY() >= 32)
-                {
-                    players[player.getX()][player.getY()] = 0;
-                    board[player.getX() + player.getOffSetTileX()][player.getY() + player.getOffSetTileY()] = 0;
-                    player.setOffSetY(0);
-                    player.setOffSetTileY(0);
-                    player.setY(player.getY()+1);
-                }
-                if (player.getOffSetX() <= -32)
-                {
-                    players[player.getX()][player.getY()] = 0;
-                    board[player.getX() + player.getOffSetTileX()][player.getY() + player.getOffSetTileY()] = 0;
-                    player.setOffSetX(0);
-                    player.setOffSetTileX(0);
-                    player.setX(player.getX()-1);
-                }
-                if (player.getOffSetY() <= -32)
-                {
-                    players[player.getX()][player.getY()] = 0;
-                    board[player.getX() + player.getOffSetTileX()][player.getY() + player.getOffSetTileY()] = 0;
-                    player.setOffSetY(0);
-                    player.setOffSetTileY(0);
-                    player.setY(player.getY()-1);
-                }
-            }
-            else
-            {
-                player.setOffSetTileX(0);
-                player.setOffSetX(0);
-            }
         }
     }
 
@@ -1307,36 +1219,14 @@ public class Main extends BasicGame {
         return board;
     }
 
-    public boolean[][] getBombExistence()
+    public Bomb[][] getBombs()
     {
-        boolean[][] b = new boolean[19][15];
-        for (int x = 0; x < 19; x++)
-        {
-            for (int y = 0; y < 15; y++)
-            {
-                if (bombs[x][y] != null)
-                {
-                    b[x][y] = true;
-                }
-            }
-        }
-        return b;
+        return bombs;
     }
 
-    public boolean[][] getFireExistence()
+    public Fire[][] getFire()
     {
-        boolean[][] b = new boolean[19][15];
-        for (int x = 0; x < 19; x++)
-        {
-            for (int y = 0; y < 15; y++)
-            {
-                if (fire[x][y] != null)
-                {
-                    b[x][y] = true;
-                }
-            }
-        }
-        return b;
+        return fire;
     }
 
     public Input getInput()

@@ -149,6 +149,96 @@ public class Player {
         return moveTile;
     }
 
+    public void shift(Main main)
+    {
+        if (alive)
+        {
+            if (main.getPlayerBoard()[x+offsetTileX][y+offsetTileY] == 0)
+            {
+                main.getPlayerBoard()[x+offsetTileX][y+offsetTileY] = pid;
+            }
+            if (main.getPlayerBoard()[x+offsetTileX][y+offsetTileY] == pid)
+            {
+                if (offsetTileX == 1)
+                {
+                    offsetX += 3;
+                }
+                if (offsetTileX == -1)
+                {
+                    offsetX += -3;
+                }
+                if (offsetTileY == 1)
+                {
+                    offsetY += 3;
+                }
+                if (offsetTileY == -1)
+                {
+                    offsetY += -3;
+                }
+                if (offsetX >= 32)
+                {
+                    main.getPlayerBoard()[x][y] = 0;
+                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    offsetX = 0;
+                    offsetTileX = 0;
+                    x += 1;
+                }
+                if (offsetY >= 32)
+                {
+                    main.getPlayerBoard()[x][y] = 0;
+                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    offsetY = 0;
+                    offsetTileY = 0;
+                    y += 1;
+                }
+                if (offsetX <= -32)
+                {
+                    main.getPlayerBoard()[x][y] = 0;
+                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    offsetX = 0;
+                    offsetTileX = 0;
+                    x += -1;
+                }
+                if (offsetY <= -32)
+                {
+                    main.getPlayerBoard()[x][y] = 0;
+                    main.getBoard()[x+offsetTileX][y+offsetTileY] = 0;
+                    offsetY = 0;
+                    offsetTileY = 0;
+                    y += -1;
+                }
+            }
+            else
+            {
+                offsetTileX = 0;
+                offsetX = 0;
+                offsetTileY = 0;
+                offsetY = 0;
+            }
+        }
+    }
+
+    public boolean placeBomb(Main main)
+    {
+        if (alive)
+        {
+            if (offsetTileX == 0 && offsetTileY == 0)
+            {
+                if (main.getBoard()[x][y] == 0)
+                {
+                    if (bombAmt > 0)
+                    {
+                        main.getBombs()[x][y] = new Bomb(150, firepower, this);
+                        main.getBoard()[x][y] = 3;
+                        bombAmt --;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public int getPID()
     {
         return pid;
