@@ -15,9 +15,6 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class Main extends BasicGame {
 
-    //Ability to turn off music (faster load times) for development reasons.
-    //This is not a replacement for sound/music controls for the in game menu,
-    //which will be addressed soon.
     private final boolean musicOn = false;
 
     private int gameState = 0;
