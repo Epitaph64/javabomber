@@ -65,7 +65,7 @@ public class Main extends BasicGame implements Game {
     {
         if (state == gameState.Map)
         {
-            //
+            
         }
         if (state == gameState.Game)
         {
